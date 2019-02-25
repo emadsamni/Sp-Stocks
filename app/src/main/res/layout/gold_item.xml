@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/linearLayout2"
+    >
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginStart="20dp"
+        android:orientation="horizontal">
+
+
+        <ImageView
+            android:id="@+id/imageViewGoldIcon"
+            android:layout_width="@dimen/image_width"
+            android:layout_height="@dimen/image_high"
+            android:layout_gravity="center"
+            android:layout_margin="5dp" />
+        <TextView
+            android:id="@+id/textViewGoldName"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:textDirection="locale"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/pricetextsize" />
+        <ImageView
+            android:layout_marginStart="5dp"
+            android:id="@+id/imageViewGoldChange"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+
+            />
+
+        <TextView
+            android:id="@+id/textViewGoldValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/pricetextsize"
+            android:textDirection="locale"/>
+
+
+    </LinearLayout>
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+
+        android:layout_weight="1"
+        android:background="@color/grayDark" />
+</LinearLayout>
