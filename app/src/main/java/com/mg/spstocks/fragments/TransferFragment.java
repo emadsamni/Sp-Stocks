@@ -224,7 +224,7 @@ public class TransferFragment  extends Fragment {
     private LoginButton loginButton;
     private CallbackManager callbackManager;
     private void initFacebookLogin(View container) {
-        LoginManager.getInstance().logOut();
+       // LoginManager.getInstance().logOut();
 
         loginButton = container.findViewById(R.id.login_button);
         loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
