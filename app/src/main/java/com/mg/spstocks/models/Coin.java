@@ -7,7 +7,11 @@ public class Coin {
     private String image;
     private String coin_name;
     List<CoinLog> log;
-
+     public Coin(String coin_name ,String image)
+     {
+         this.coin_name = coin_name;
+         this.image = image;
+     }
     public Coin(int id, String image, String coin_name, List<CoinLog> log) {
         this.id = id;
         this.image = image;

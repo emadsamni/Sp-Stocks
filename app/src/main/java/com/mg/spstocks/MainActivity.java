@@ -1,6 +1,14 @@
 package com.mg.spstocks;
 
+import android.app.ActivityManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
 import android.support.design.widget.BottomNavigationView;
@@ -25,6 +33,7 @@ import com.mg.spstocks.models.Coin;
 import com.mg.spstocks.models.gold;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import retrofit2.Call;
@@ -55,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         goldList=new ArrayList<gold>();
         progressDialog.show(this);
         getData();
+        setNotification();
     }
    private void getData() {
         Api apiService = ApiClient.getClient().create(Api.class);
@@ -66,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
              for (int i =0;i<temp.size();i++)
              {
                  coinList.add(temp.get(i));
+
              }
 
              getGold();
@@ -117,6 +128,39 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         return false;
     }
+    public  void setNotification()
+    {
+                Calendar firingCal = Calendar.getInstance() ;
+                Calendar calendar = Calendar.getInstance();
+
+                firingCal.set(Calendar.HOUR_OF_DAY, 8);
+                firingCal.set(Calendar.MINUTE, 0);
+                firingCal.set(Calendar.SECOND, 0);
+                long intendedTime= firingCal.getTimeInMillis();
+                long currentTime= calendar.getTimeInMillis();
+
+               Intent intent = new Intent(getApplicationContext(), Notification_reciver.class);
+               PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+               AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        if (intendedTime >= currentTime) {
+            alarmManager.setRepeating(AlarmManager.RTC,
+                    intendedTime,
+                    AlarmManager.INTERVAL_DAY,
+                    pendingIntent);
+        }
+        else
+        {
+            firingCal.add(Calendar.DAY_OF_MONTH, 1);
+            intendedTime = firingCal.getTimeInMillis();
+            alarmManager.setRepeating(AlarmManager.RTC,
+                    intendedTime,
+                    AlarmManager.INTERVAL_DAY,
+                    pendingIntent);
+
+        }
+
+    }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         Fragment fragment= null;
