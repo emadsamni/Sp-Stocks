@@ -44,33 +44,30 @@ public class Coinadapter extends RecyclerView.Adapter<Coinadapter.MyViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
         Coin current= data.get(i);
-        myViewHolder.buyValue.setText(current.getLog().get(0).getSell()+" S.P");
-        myViewHolder.sellValue.setText(  current.getLog().get(0).getBuy()+" S.P");
+        if (current.getLog().size()!=0) {
+            myViewHolder.buyValue.setText(current.getLog().get(0).getSell() + " S.P");
+            myViewHolder.sellValue.setText(current.getLog().get(0).getBuy() + " S.P");
+            if (current.getLog().size() > 1 ) {
+                if (current.getLog().get(0).getSell() > current.getLog().get(1).getSell()) {
+                    myViewHolder.ChangeIcon.setImageResource(drawable.trendingup);
+                } else {
+                    if (current.getLog().get(0).getSell() < current.getLog().get(1).getSell()) {
+                        myViewHolder.ChangeIcon.setImageResource(drawable.trendingdown);
+                    } else {
+                        myViewHolder.ChangeIcon.setImageResource(drawable.trendingup);
+                    }
 
-        if (current.getLog().get(0).getSell() > current.getLog().get(1).getSell())
-        {
-            myViewHolder.ChangeIcon.setImageResource(drawable.trendingup);
-        }
-        else
-        {
-            if (current.getLog().get(0).getSell() < current.getLog().get(1).getSell())
-            {
-                myViewHolder.ChangeIcon.setImageResource(drawable.trendingdown);
+                }
             }
-            else
-            {
+            else {
                 myViewHolder.ChangeIcon.setImageResource(drawable.trendingup);
             }
-
         }
-         if ( (i % 2) == 0 )
-         {
-               myViewHolder.linearLayout.setBackgroundColor(context.getResources().getColor(color.white));
-         }
-         else
-         {
-             myViewHolder.linearLayout.setBackgroundColor(context.getResources().getColor(color.gray));
-         }
+            if ((i % 2) == 0) {
+                myViewHolder.linearLayout.setBackgroundColor(context.getResources().getColor(color.white));
+            } else {
+                myViewHolder.linearLayout.setBackgroundColor(context.getResources().getColor(color.gray));
+            }
 
         String path= "https://api.spstocks.com/public/storage/"+ current.getImage();
         path = path.replaceAll("\\\\", "/");

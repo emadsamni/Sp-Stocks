@@ -39,32 +39,26 @@ public class Goldadapter extends RecyclerView.Adapter<Goldadapter.MyViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull Goldadapter.MyViewHolder myViewHolder, int i) {
         gold current= data.get(i);
-        myViewHolder.goldName.setText(current.getGold_name());
-        myViewHolder.goldPrice.setText(current.getLog().get(0).getGold_price()+" "+ current.getGold_type().getName()+" ");
-       if (current.getLog().get(0).getGold_price() > current.getLog().get(1).getGold_price())
-        {
-            myViewHolder.goldChange.setImageResource(R.drawable.trendingup);
-        }
-        else
-        {
-            if (current.getLog().get(0).getGold_price() < current.getLog().get(1).getGold_price())
-            {
-                myViewHolder.goldChange.setImageResource(R.drawable.trendingdown);
+        if (current.getLog().size()!=0) {
+            myViewHolder.goldName.setText(current.getGold_name());
+            myViewHolder.goldPrice.setText(current.getLog().get(0).getGold_price() + " " + current.getGold_type().getName() + " ");
+            if (current.getLog().size() > 1 ) {
+                if (current.getLog().get(0).getGold_price() > current.getLog().get(1).getGold_price()) {
+                    myViewHolder.goldChange.setImageResource(R.drawable.trendingup);
+                } else {
+                    if (current.getLog().get(0).getGold_price() < current.getLog().get(1).getGold_price()) {
+                        myViewHolder.goldChange.setImageResource(R.drawable.trendingdown);
+                    } else {
+                        myViewHolder.goldChange.setImageResource(R.drawable.trendingup);
+                    }
+
+                }
             }
-            else
-            {
+            else {
                 myViewHolder.goldChange.setImageResource(R.drawable.trendingup);
             }
+        }
 
-        }
-        if ( (i % 2) == 0 )
-        {
-            myViewHolder.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.white));
-        }
-        else
-        {
-            myViewHolder.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.gray));
-        }
         if ( (i % 2) == 0 )
         {
             myViewHolder.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.white));
