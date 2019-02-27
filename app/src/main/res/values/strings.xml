@@ -12,4 +12,5 @@
     <string name="to">To</string>
     <string name="facebook_app_id">2199453887038296</string>
     <string name="fb_login_protocol_scheme">fb2199453887038296</string>
+    <string name="ReConnect">Reconnect</string>
 </resources>

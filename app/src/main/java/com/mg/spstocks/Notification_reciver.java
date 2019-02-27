@@ -1,5 +1,6 @@
 package com.mg.spstocks;
 
+import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -28,21 +29,25 @@ public class Notification_reciver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
 
-        Api apiService = ApiClient.getClient().create(Api.class);
-        Call<ApiResponse<List<Coin>>> call = apiService.getCoins();
-        call.enqueue(new Callback<ApiResponse<List<Coin>>>() {
-            @Override
-            public void onResponse(Call<ApiResponse<List<Coin>>> call, Response<ApiResponse<List<Coin>>> response) {
-                List<Coin> temp = response.body().getData();
-                coin =temp.get(0);
-                getdata(context);
-            }
-            @Override
-            public void onFailure(Call<ApiResponse<List<Coin>>> call, Throwable t) {
+            Api apiService = ApiClient.getClient().create(Api.class);
+            Call<ApiResponse<List<Coin>>> call = apiService.getCoins();
+            call.enqueue(new Callback<ApiResponse<List<Coin>>>() {
+                @Override
+                public void onResponse(Call<ApiResponse<List<Coin>>> call, Response<ApiResponse<List<Coin>>> response) {
+                    List<Coin> temp = response.body().getData();
+                    coin = temp.get(0);
+                    getdata(context);
+
+                }
+
+                @Override
+                public void onFailure(Call<ApiResponse<List<Coin>>> call, Throwable t) {
 
 
-            }
-        });
+
+                }
+            });
+
 
     }
 
@@ -60,4 +65,5 @@ public class Notification_reciver extends BroadcastReceiver {
                 .setAutoCancel(true);
         notificationManager.notify(100, builder.build());
     }
+
 }

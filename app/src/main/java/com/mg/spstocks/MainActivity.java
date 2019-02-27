@@ -2,6 +2,7 @@ package com.mg.spstocks;
 
 import android.app.ActivityManager;
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -17,10 +18,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mg.spstocks.fragments.CoinFragment;
 import com.mg.spstocks.fragments.GoldFragment;
 import com.mg.spstocks.fragments.TransferFragment;
@@ -30,8 +35,11 @@ import com.mg.spstocks.api.classes.Api;
 import com.mg.spstocks.api.classes.ApiClient;
 import com.mg.spstocks.api.classes.ApiResponse;
 import com.mg.spstocks.models.Coin;
+
+
 import com.mg.spstocks.models.gold;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -50,6 +58,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     ProgressDialog progressDialog;
     TextView textView;
     Toolbar toolbar ;
+    SharedPreferences  mPrefs;
+    Dialog reConnectDialog;
+    Button reConnect;
 
 
     @Override
@@ -62,11 +73,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         navigation.setOnNavigationItemSelectedListener(this);
         coinList= new ArrayList<Coin>();
         goldList=new ArrayList<gold>();
+        mPrefs = getPreferences(MODE_PRIVATE);
         progressDialog.show(this);
+
         getData();
         setNotification();
     }
-   private void getData() {
+    public void getData() {
         Api apiService = ApiClient.getClient().create(Api.class);
         Call<ApiResponse<List<Coin>>> call = apiService.getCoins();
         call.enqueue(new Callback<ApiResponse<List<Coin>>>() {
@@ -77,13 +90,63 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
              {
                  coinList.add(temp.get(i));
 
-             }
 
+             }
+             SharedPreferences.Editor prefsEditor = mPrefs.edit();
+             Gson gson = new Gson();
+             String json = gson.toJson(coinList);
+             prefsEditor.putString("coinList", json);
+             prefsEditor.commit();
              getGold();
          }
          @Override
          public void onFailure(Call<ApiResponse<List<Coin>>> call, Throwable t) {
-             Toast.makeText(MainActivity.this,  getResources().getString(R.string.internet_error), Toast.LENGTH_SHORT).show();
+             if (mPrefs.contains("coinList") && mPrefs.contains("goldList") ) {
+                 Gson gson = new Gson();
+                 String json = mPrefs.getString("coinList", "");
+                 Type type = new TypeToken<List<Coin>>() {
+                 }.getType();
+                 coinList = gson.fromJson(json, type);
+                 gson = new Gson();
+                 json = mPrefs.getString("goldList", "");
+                 type = new TypeToken<List<gold>>() {
+                 }.getType();
+                 goldList = gson.fromJson(json, type);
+                 progressDialog.cancel();
+                 CoinFragment fragment = new CoinFragment();
+                 loadFragment(fragment);
+             }
+             else
+             {
+                 progressDialog.cancel();
+                 if (reConnectDialog == null) {
+                     reConnectDialog = new Dialog(MainActivity.this, R.style.myDialog);
+                     reConnectDialog.setContentView(R.layout.dialog_connect);
+                     reConnectDialog.setCancelable(false);
+                     reConnectDialog.setCanceledOnTouchOutside(false);
+                     reConnectDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                     reConnectDialog.show();
+                     reConnect = (Button) reConnectDialog.findViewById(R.id.buttonReconnect);
+                     reConnect.setOnClickListener(new View.OnClickListener() {
+                         @Override
+                         public void onClick(View v) {
+                             reConnectDialog.cancel();
+                             progressDialog.show(MainActivity.this);
+                             getData();
+                         }
+                     });
+                 }
+                 else
+                 {
+                     if(!reConnectDialog.isShowing())
+                     {
+                         reConnectDialog.show();
+                     }
+                 }
+
+
+             }
+             Toast.makeText(MainActivity.this, getResources().getString(R.string.internet_error), Toast.LENGTH_SHORT).show();
          }
      });
 
@@ -100,13 +163,21 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 {
                     goldList.add(temp.get(i));
                 }
+                SharedPreferences.Editor prefsEditor = mPrefs.edit();
+                Gson gson = new Gson();
+                String json = gson.toJson(goldList);
+                prefsEditor.putString("goldList", json);
+                prefsEditor.commit();
+                if (reConnectDialog != null)
+                    if (reConnectDialog.isShowing())
+                        reConnectDialog.cancel();
                 progressDialog.cancel();
-
                 CoinFragment fragment = new CoinFragment();
                 loadFragment(fragment);
             }
             @Override
             public void onFailure(Call<ApiResponse<List<gold>>> call, Throwable t) {
+
                 Toast.makeText(MainActivity.this, getResources().getString(R.string.internet_error), Toast.LENGTH_SHORT).show();
             }
         });
@@ -133,9 +204,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 Calendar firingCal = Calendar.getInstance() ;
                 Calendar calendar = Calendar.getInstance();
 
-                firingCal.set(Calendar.HOUR_OF_DAY, 8);
-                firingCal.set(Calendar.MINUTE, 0);
-                firingCal.set(Calendar.SECOND, 0);
+                firingCal.set(Calendar.HOUR_OF_DAY, 9);
+                firingCal.set(Calendar.MINUTE, 1);
+                firingCal.set(Calendar.SECOND, 1);
                 long intendedTime= firingCal.getTimeInMillis();
                 long currentTime= calendar.getTimeInMillis();
 

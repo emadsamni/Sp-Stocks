@@ -12,6 +12,8 @@
     <string name="Buy">بيع</string>
     <string name="from">من</string>
     <string name="to">إلى</string>
+    <string name="fb_login_protocol_scheme">fb2199453887038296</string>
+    <string name="ReConnect">إعادة الاتصال مجددا</string>
 
 
 </resources>
