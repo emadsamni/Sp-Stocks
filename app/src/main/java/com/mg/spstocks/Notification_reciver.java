@@ -6,6 +6,9 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -64,6 +67,13 @@ public class Notification_reciver extends BroadcastReceiver {
                 .setContentText(coin.getCoin_name()+"  "+context.getResources().getString(R.string.Buy)+" :   " +coin.getLog().get(0).getBuy()+"  " + context.getResources().getString(R.string.Sell)+" :   " +coin.getLog().get(0).getSell())
                 .setAutoCancel(true);
         notificationManager.notify(100, builder.build());
+        try {
+            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone r = RingtoneManager.getRingtone(context, notification);
+            r.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

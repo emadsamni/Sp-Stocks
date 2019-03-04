@@ -73,11 +73,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         navigation.setOnNavigationItemSelectedListener(this);
         coinList= new ArrayList<Coin>();
         goldList=new ArrayList<gold>();
-        mPrefs = getPreferences(MODE_PRIVATE);
+        mPrefs = getSharedPreferences("myPrefs",MODE_PRIVATE);
         progressDialog.show(this);
-
         getData();
         setNotification();
+        setDolarNotification();
+
+
     }
     public void getData() {
         Api apiService = ApiClient.getClient().create(Api.class);
@@ -89,8 +91,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
              for (int i =0;i<temp.size();i++)
              {
                  coinList.add(temp.get(i));
-
-
              }
              SharedPreferences.Editor prefsEditor = mPrefs.edit();
              Gson gson = new Gson();
@@ -155,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     {
         Api apiService = ApiClient.getClient().create(Api.class);
         Call<ApiResponse<List<gold>>> call = apiService.getGold();
+
         call.enqueue(new Callback<ApiResponse<List<gold>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<gold>>> call, Response<ApiResponse<List<gold>>> response) {
@@ -213,11 +214,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                Intent intent = new Intent(getApplicationContext(), Notification_reciver.class);
                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
         if (intendedTime >= currentTime) {
             alarmManager.setRepeating(AlarmManager.RTC,
                     intendedTime,
                     AlarmManager.INTERVAL_DAY,
                     pendingIntent);
+
         }
         else
         {
@@ -227,9 +230,25 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     intendedTime,
                     AlarmManager.INTERVAL_DAY,
                     pendingIntent);
-
         }
 
+    }
+
+    public  void setDolarNotification()
+    {
+
+        Calendar firingCal = Calendar.getInstance() ;
+        Calendar calendar = Calendar.getInstance();
+        long intendedTime= firingCal.getTimeInMillis();
+        long currentTime= calendar.getTimeInMillis();
+        calendar.add(Calendar.HOUR_OF_DAY,8);
+        Intent intent2 = new Intent(getApplicationContext(), DolarNotificationReciver.class);
+        PendingIntent pendingIntent2 = PendingIntent.getBroadcast(getApplicationContext(), 100, intent2, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager2 = (AlarmManager) getSystemService(ALARM_SERVICE);
+            alarmManager2.setRepeating(AlarmManager.RTC,
+                    calendar.getTimeInMillis(),
+                    1000*60*60*8,
+                    pendingIntent2);
     }
 
     @Override
