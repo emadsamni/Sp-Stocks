@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="@dimen/horizontalMargin"
         android:orientation="horizontal">
 
 
@@ -22,17 +22,17 @@
             android:layout_margin="5dp" />
         <TextView
             android:id="@+id/textViewGoldName"
-            android:layout_width="100dp"
+            android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="@dimen/horizontalMargin"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:textDirection="locale"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="@dimen/pricetextsize" />
         <ImageView
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="@dimen/horizontalMargin"
             android:id="@+id/imageViewGoldChange"
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -47,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="@dimen/horizontalMargin"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:textColor="@color/colorPrimaryDark"
