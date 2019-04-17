@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     >
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,30 +14,46 @@
             android:layout_width="match_parent"
             android:layout_height="49.5dp"
             android:orientation="horizontal"
-            android:background="@color/gray"
+            android:background="@color/colorPrimary"
+            android:weightSum="4"
 
             >
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="170dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_gravity="center_vertical"
-                android:textColor="@color/colorAccent"
-                android:textSize="@dimen/buyselltextsize"
-                android:text="@string/Sell"/>
-            <TextView
-                android:layout_gravity="center_vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="45dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:textColor="@color/colorAccent"
-                android:textSize="@dimen/buyselltextsize"
-                android:text="@string/Buy"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_weight="1.25">
+                <TextView
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="@dimen/buyselltextsize"
+                    android:text="@string/Sell"/>
+            </LinearLayout>
+           <LinearLayout
+               android:layout_width="0dp"
+               android:orientation="horizontal"
+               android:gravity="center"
+               android:layout_height="match_parent"
+               android:layout_weight="1.25">
+               <TextView
+                   android:layout_gravity="center_vertical"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:textColor="@color/colorAccent"
+                   android:textSize="@dimen/buyselltextsize"
+                   android:text="@string/Buy"/>
+
+           </LinearLayout>
 
         </LinearLayout>
         <View
@@ -51,6 +68,8 @@
         android:id="@+id/coinrec"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
 
 
         />

@@ -46,7 +46,7 @@ public class DolarNotificationReciver  extends BroadcastReceiver {
 
         mPrefs = context.getSharedPreferences("myPrefs",context.MODE_PRIVATE);
         Api apiService = ApiClient.getClient().create(Api.class);
-        Call<ApiResponse<List<Coin>>> call = apiService.getCoins();
+        Call<ApiResponse<List<Coin>>> call = apiService.getCoins(Constants.API_KEY);
         call.enqueue(new Callback<ApiResponse<List<Coin>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<Coin>>> call, Response<ApiResponse<List<Coin>>> response) {

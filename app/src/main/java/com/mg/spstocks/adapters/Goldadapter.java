@@ -59,14 +59,7 @@ public class Goldadapter extends RecyclerView.Adapter<Goldadapter.MyViewHolder>{
             }
         }
 
-        if ( (i % 2) == 0 )
-        {
-            myViewHolder.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.white));
-        }
-        else
-        {
-            myViewHolder.linearLayout.setBackgroundColor(context.getResources().getColor(R.color.gray));
-        }
+
         String path= "https://api.spstocks.com/public/storage/"+current.getImage();
         path = path.replaceAll("\\\\", "/");
         Picasso.with(context).load(path).into(myViewHolder.goldIcon);

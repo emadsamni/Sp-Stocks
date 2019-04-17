@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
     public void getData() {
         Api apiService = ApiClient.getClient().create(Api.class);
-        Call<ApiResponse<List<Coin>>> call = apiService.getCoins();
+        Call<ApiResponse<List<Coin>>> call = apiService.getCoins(Constants.API_KEY);
         call.enqueue(new Callback<ApiResponse<List<Coin>>>() {
          @Override
          public void onResponse(Call<ApiResponse<List<Coin>>> call, Response<ApiResponse<List<Coin>>> response) {
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public void getGold()
     {
         Api apiService = ApiClient.getClient().create(Api.class);
-        Call<ApiResponse<List<gold>>> call = apiService.getGold();
+        Call<ApiResponse<List<gold>>> call = apiService.getGold(Constants.API_KEY);
 
         call.enqueue(new Callback<ApiResponse<List<gold>>>() {
             @Override

@@ -11,6 +11,8 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -34,79 +36,125 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import android.graphics.Matrix;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 public class TransferFragment  extends Fragment {
     Spinner fromSpinner , toSpinner;
-    ArrayAdapter<String> adapter;
+    ArrayAdapter<String> fromAdapter;
+    ArrayAdapter<String> toAadapter;
     List<Coin> coinList;
-    List <String> fromtolist;
-    RadioGroup radioGroup;
-    RadioButton radioButton1;
-    RadioButton radioButton2;
-    EditText editText;
-    TextView toTxt;
-    int from ,to ,type;
+    List <String> fromlist;
+    List <String> tolist;
+    TextView fromCoin , toCoin ,sellRes ,buyRes;
+    EditText input;
+    int from ,to ;
+    ImageView imageView;
+    Animation animation;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.transfer_fragment, null);
         fromSpinner = (Spinner) view.findViewById(R.id.fromspid);
         toSpinner = (Spinner) view.findViewById(R.id.tospid);
-        coinList= ((MainActivity)getActivity()).getCoinList();
-        fromtolist = new ArrayList<>();
-        radioGroup = view.findViewById(R.id.radiogroup);
-        radioButton1= view.findViewById(R.id.buyradio);
-        radioButton2= view.findViewById(R.id.sellradio);
-        editText= view.findViewById(R.id.fromedtxt);
-        toTxt=view.findViewById(R.id.toedtxt);
-        radioButton1.setChecked(true);
-        initFacebookLogin(view);
-        fromtolist.add("الليرة السورية");
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        imageView = (ImageView) view.findViewById(R.id.convert_button);
+        input =(EditText)view.findViewById(R.id.button_input) ;
+        sellRes = (TextView) view.findViewById(R.id.sellRes);
+        buyRes = (TextView) view.findViewById(R.id.BuyRes);
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (radioButton1.isChecked())
-                {
-                    type=0;
+            public void onClick(View v) {
+                if (isInputValidation() ) {
+                    animation = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate);
+                    imageView.startAnimation(animation);
+                     cal();
                 }
                 else
                 {
-                    type=1;
+                    Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.inputEmpty), Toast.LENGTH_SHORT).show();
                 }
-                cal();
             }
         });
+        coinList= ((MainActivity)getActivity()).getCoinList();
+        fromlist = new ArrayList<>();
+        tolist = new ArrayList<>();
+        fromCoin = view.findViewById(R.id.fromCoin);
+        toCoin = view.findViewById(R.id.toCoin);
+        initFacebookLogin(view);
+
+        fromlist.add(getActivity().getResources().getString(R.string.from));
+        fromlist.add("الليرة السورية");
+        tolist.add( getActivity().getResources().getString(R.string.to));
+        tolist.add("الليرة السورية");
+
         for (int i=0;i<coinList.size();i++)
         {
-            fromtolist.add(coinList.get(i).getCoin_name());
+            fromlist.add(coinList.get(i).getCoin_name());
+        }
+        for (int i=0;i<coinList.size();i++)
+        {
+            tolist.add(coinList.get(i).getCoin_name());
         }
         from =0;
         to = 0;
-        type= 0;
-        adapter = new ArrayAdapter<String>(getActivity(), R.layout.layout_spinner ,fromtolist) {
+
+        fromAdapter = new ArrayAdapter<String>(getActivity(), R.layout.layout_spinner ,fromlist) {
             public View getView(int position, View convertView, ViewGroup parent) {
                 TextView tv = (TextView) super.getView(position, convertView, parent);
-                tv.setTextColor(getResources().getColor(R.color.grayDarkDark));
+                tv.setTextColor(getResources().getColor(R.color.white));
 
                 return tv;
             }
+            @Override
+            public View getDropDownView(int position,  View convertView,  ViewGroup parent) {
+                View view;
+                if (position == 0) {
+                    TextView selectView = new TextView(getContext());
+                    selectView.setHeight(0);
+                    selectView.setVisibility(View.GONE);
+                    view = selectView;
+                } else
+                    view = super.getDropDownView(position, null, parent);
+
+                return view;
+            }
         };
-        adapter.setDropDownViewResource(R.layout.layout_spinner_dropdown_item);
-        fromSpinner.setAdapter(adapter);
-        toSpinner.setAdapter(adapter);
+        toAadapter = new ArrayAdapter<String>(getActivity(), R.layout.layout_spinner ,tolist) {
+            public View getView(int position, View convertView, ViewGroup parent) {
+                TextView tv = (TextView) super.getView(position, convertView, parent);
+                tv.setTextColor(getResources().getColor(R.color.white));
+
+                return tv;
+            }
+
+            @Override
+            public View getDropDownView(int position,  View convertView,  ViewGroup parent) {
+                View view;
+                if (position == 0) {
+                    TextView selectView = new TextView(getContext());
+                    selectView.setHeight(0);
+                    selectView.setVisibility(View.GONE);
+                    view = selectView;
+                } else
+                    view = super.getDropDownView(position, null, parent);
+
+                return view;
+            }
+        };
+        fromSpinner.setAdapter(fromAdapter);
+        toSpinner.setAdapter(toAadapter);
         fromSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (radioButton1.isChecked())
-                {
-                    type=0;
+
+                if (fromSpinner.getSelectedItemPosition() != 0) {
+                    from = fromSpinner.getSelectedItemPosition();
+                    fromCoin.setText(fromSpinner.getSelectedItem().toString());
+                    //fromSpinner.setSelection(0);
+                    fromSpinner.setAdapter(fromAdapter);
                 }
-                else
-                {
-                    type=1;
-                }
-                 from=fromSpinner.getSelectedItemPosition();
-                 to = toSpinner.getSelectedItemPosition();
-                cal();
+
+
 
             }
 
@@ -118,17 +166,15 @@ public class TransferFragment  extends Fragment {
         toSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (radioButton1.isChecked())
-                {
-                    type=0;
+
+                if (toSpinner.getSelectedItemPosition() != 0) {
+                    to = toSpinner.getSelectedItemPosition();
+                    toCoin.setText(toSpinner.getSelectedItem().toString());
+                    toSpinner.setSelection(0);
                 }
-                else
-                {
-                    type=1;
-                }
-                from=fromSpinner.getSelectedItemPosition();
-                to = toSpinner.getSelectedItemPosition();
-                cal();
+
+
+                //  cal();
             }
 
             @Override
@@ -136,80 +182,76 @@ public class TransferFragment  extends Fragment {
 
             }
         });
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (radioButton1.isChecked())
-                {
-                    type=0;
-                }
-                else
-                {
-                    type=1;
-                }
-                cal();
-            }
-        });
+
         return view;
+    }
+
+    private boolean isInputValidation() {
+        boolean check = true;
+        String message="";
+        if (input.getText().toString().isEmpty()){
+            check =false;
+        }
+        if (fromCoin.getText().toString().isEmpty()){
+
+            check =false;
+        }
+        if (toCoin.getText().toString().isEmpty()){
+
+            check =false;
+        }
+
+        return check;
+
     }
     public  void cal()
     {
           double x=0;
-           if (editText.getText().toString().equals(""))
-           {
-              x= 0;
-           }
-           else
-           {
-                String fromText= editText.getText().toString();
-                x= Double.parseDouble(fromText);
-           }
+          String fromText= input.getText().toString();
+          x= Double.parseDouble(fromText);
 
            double res =0;
-           if (type == 0 ) {
+           double res2 =0;
+           int tempFrom;
+           int tempTO;
+           tempFrom = from;
+           tempTO =to;
+           from--;
+           to --;
                if (from == 0) {
                    if (to == 0) {
                        res = x;
                    } else {
                        res = x / coinList.get(to - 1).getLog().get(0).getBuy();
+                       res2 = x / coinList.get(to - 1).getLog().get(0).getSell();
                    }
                } else {
                    if (to == 0) {
                        res = x * coinList.get(from - 1).getLog().get(0).getBuy();
+                       res2 = x * coinList.get(from - 1).getLog().get(0).getSell();
                    } else {
                        res = x * coinList.get(from - 1).getLog().get(0).getBuy();
                        res = res / coinList.get(to - 1).getLog().get(0).getBuy();
+
+                       res2 = x * coinList.get(from - 1).getLog().get(0).getSell();
+                       res2 = res2 / coinList.get(to - 1).getLog().get(0).getSell();
                    }
                }
-           }
-           else
-           {
-               if (from == 0) {
-                   if (to == 0) {
-                       res = x;
-                   } else {
-                       res = x / coinList.get(to - 1).getLog().get(0).getSell();
-                   }
-               } else {
-                   if (to == 0) {
-                       res = x * coinList.get(from - 1).getLog().get(0).getSell();
-                   } else {
-                       res = x * coinList.get(from - 1).getLog().get(0).getSell();
-                       res = res / coinList.get(to - 1).getLog().get(0).getSell();
-                   }
-               }
-           }
+
            res = round(res,6);
          NumberFormat nf = NumberFormat.getNumberInstance(Locale.CANADA);
          nf.setMaximumFractionDigits(6);
          String rounded = nf.format(res);
-           toTxt.setText(rounded);
+         res2 = round(res2,6);
+          nf = NumberFormat.getNumberInstance(Locale.CANADA);
+         nf.setMaximumFractionDigits(6);
+         String rounded2 = nf.format(res2);
+         sellRes.setText(rounded2);
+         buyRes.setText(rounded);
+         from =tempFrom;
+         to =tempTO;
+
+
 
 
     }

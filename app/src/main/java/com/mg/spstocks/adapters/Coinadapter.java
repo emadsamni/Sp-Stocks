@@ -51,7 +51,7 @@ public class Coinadapter extends RecyclerView.Adapter<Coinadapter.MyViewHolder>{
                 if (current.getLog().get(0).getSell() > current.getLog().get(1).getSell()) {
                     myViewHolder.ChangeIcon.setImageResource(drawable.trendingup);
                 } else {
-                    if (current.getLog().get(0).getSell() < current.getLog().get(1).getSell()) {
+                    if (current.getLog().get(0).getBuy() < current.getLog().get(1).getBuy()) {
                         myViewHolder.ChangeIcon.setImageResource(drawable.trendingdown);
                     } else {
                         myViewHolder.ChangeIcon.setImageResource(drawable.trendingup);
@@ -63,11 +63,7 @@ public class Coinadapter extends RecyclerView.Adapter<Coinadapter.MyViewHolder>{
                 myViewHolder.ChangeIcon.setImageResource(drawable.trendingup);
             }
         }
-            if ((i % 2) == 0) {
-                myViewHolder.linearLayout.setBackgroundColor(context.getResources().getColor(color.white));
-            } else {
-                myViewHolder.linearLayout.setBackgroundColor(context.getResources().getColor(color.gray));
-            }
+
 
         String path= "https://api.spstocks.com/public/storage/"+ current.getImage();
         path = path.replaceAll("\\\\", "/");
