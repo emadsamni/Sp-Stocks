@@ -17,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         getData();
         setNotification();
         setDolarNotification();
+
 
 
     }

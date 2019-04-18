@@ -3,16 +3,18 @@
 
     <item
         android:id="@+id/navigation_coins"
-        android:icon="@drawable/coins"
+        android:icon="@drawable/coins_icon"
         android:title="@string/title_coin"
         />
     <item
     android:id="@+id/navigation_gold"
-    android:icon="@drawable/gold"
+    android:icon="@drawable/gold_icon"
     android:title="@string/title_gold" />
     <item
         android:id="@+id/navigation_tranfer"
-        android:icon="@drawable/exchange"
+        android:iconTint="@color/colorPrimaryDark"
+        android:iconTintMode="multiply"
+        android:icon="@drawable/transfer_icon"
         android:title="@string/title_tranfer" />
 
 </menu>

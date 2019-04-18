@@ -17,13 +17,14 @@ import pl.droidsonroids.gif.GifImageView;
 
 public class GifActivity extends AppCompatActivity {
     private static final String TAG = "GifActivity";
-    private static int TIME_OUT = 1500;
+    private static int TIME_OUT = 3000;
+    GifImageView gifImageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gif);
-
+        gifImageView= (GifImageView)findViewById(R.id.gifImage);
 
         new Handler().postDelayed(new Runnable() {
             @Override
