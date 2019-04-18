@@ -18,12 +18,16 @@
             android:orientation="horizontal"
             android:gravity="center"
             android:layout_weight="1">
-        <ImageView
-            android:id="@+id/imageViewGoldIcon"
-            android:layout_width="@dimen/image_width"
-            android:layout_height="@dimen/image_high"
-            android:layout_gravity="center"
-            android:layout_margin="5dp" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/imageViewGoldIcon"
+                android:layout_width="@dimen/image_width"
+                android:layout_height="@dimen/image_high"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                app:civ_border_width="1dp"
+                app:civ_border_color="@color/white"
+               />
         </LinearLayout>
         <LinearLayout
             android:layout_width="0dp"
@@ -46,6 +50,7 @@
             android:orientation="horizontal"
             android:gravity="center"
             android:layout_weight="0.5">
+
         <ImageView
             android:id="@+id/imageViewGoldChange"
             android:layout_width="20dp"
