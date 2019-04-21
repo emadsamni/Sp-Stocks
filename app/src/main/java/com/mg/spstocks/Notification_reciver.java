@@ -37,9 +37,11 @@ public class Notification_reciver extends BroadcastReceiver {
             call.enqueue(new Callback<ApiResponse<List<Coin>>>() {
                 @Override
                 public void onResponse(Call<ApiResponse<List<Coin>>> call, Response<ApiResponse<List<Coin>>> response) {
-                    List<Coin> temp = response.body().getData();
-                    coin = temp.get(0);
-                    getdata(context);
+                    if (response.isSuccessful()) {
+                        List<Coin> temp = response.body().getData();
+                        coin = temp.get(0);
+                        showNat(context);
+                    }
 
                 }
 
@@ -54,7 +56,7 @@ public class Notification_reciver extends BroadcastReceiver {
 
     }
 
-    public void getdata(Context context)
+    public void showNat(Context context)
     {
         NotificationManager notificationManager = ( NotificationManager)  context.getSystemService(context.NOTIFICATION_SERVICE);
         Intent repeating_intent = new Intent(context,MainActivity.class);
@@ -62,7 +64,7 @@ public class Notification_reciver extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getActivity(context,100, repeating_intent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setContentIntent(pendingIntent)
-                .setSmallIcon(R.mipmap.spstocks)
+                .setSmallIcon(R.mipmap.ic_launcher_foreground)
                 .setContentTitle(context.getResources().getString(R.string.app_name))
                 .setContentText(coin.getCoin_name()+"  "+context.getResources().getString(R.string.Buy)+" :   " +coin.getLog().get(0).getBuy()+"  " + context.getResources().getString(R.string.Sell)+" :   " +coin.getLog().get(0).getSell())
                 .setAutoCancel(true);

@@ -25,6 +25,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mg.spstocks.fragments.CoinFragment;
@@ -62,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     SharedPreferences  mPrefs;
     Dialog reConnectDialog;
     Button reConnect;
+    InterstitialAd mInterstitialAd;
+    private InterstitialAd interstitial;
 
 
     @Override
@@ -76,9 +82,27 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         goldList=new ArrayList<gold>();
         mPrefs = getSharedPreferences("myPrefs",MODE_PRIVATE);
         progressDialog.show(this);
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+
+        // Prepare the Interstitial Ad
+        interstitial = new InterstitialAd(MainActivity.this);
+       // Insert the Ad Unit ID
+        interstitial.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
+
+        interstitial.loadAd(adRequest);
+        // Prepare an Interstitial Ad Listener
+        interstitial.setAdListener(new AdListener() {
+            public void onAdLoaded() {
+           // Call displayInterstitial() function
+                displayInterstitial();
+            }
+        });
         getData();
         setNotification();
         setDolarNotification();
+
+
 
 
 
@@ -89,65 +113,27 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         call.enqueue(new Callback<ApiResponse<List<Coin>>>() {
          @Override
          public void onResponse(Call<ApiResponse<List<Coin>>> call, Response<ApiResponse<List<Coin>>> response) {
-             List<Coin> temp = response.body().getData();
-             for (int i =0;i<temp.size();i++)
-             {
-                 coinList.add(temp.get(i));
-             }
-             SharedPreferences.Editor prefsEditor = mPrefs.edit();
-             Gson gson = new Gson();
-             String json = gson.toJson(coinList);
-             prefsEditor.putString("coinList", json);
-             prefsEditor.commit();
-             getGold();
-         }
-         @Override
-         public void onFailure(Call<ApiResponse<List<Coin>>> call, Throwable t) {
-             if (mPrefs.contains("coinList") && mPrefs.contains("goldList") ) {
+             if (response.isSuccessful()) {
+                 List<Coin> temp = response.body().getData();
+                 for (int i = 0; i < temp.size(); i++) {
+                     coinList.add(temp.get(i));
+                 }
+                 SharedPreferences.Editor prefsEditor = mPrefs.edit();
                  Gson gson = new Gson();
-                 String json = mPrefs.getString("coinList", "");
-                 Type type = new TypeToken<List<Coin>>() {
-                 }.getType();
-                 coinList = gson.fromJson(json, type);
-                 gson = new Gson();
-                 json = mPrefs.getString("goldList", "");
-                 type = new TypeToken<List<gold>>() {
-                 }.getType();
-                 goldList = gson.fromJson(json, type);
-                 progressDialog.cancel();
-                 CoinFragment fragment = new CoinFragment();
-                 loadFragment(fragment);
+                 String json = gson.toJson(coinList);
+                 prefsEditor.putString("coinList", json);
+                 prefsEditor.commit();
+                 getGold();
              }
              else
              {
-                 progressDialog.cancel();
-                 if (reConnectDialog == null) {
-                     reConnectDialog = new Dialog(MainActivity.this, R.style.myDialog);
-                     reConnectDialog.setContentView(R.layout.dialog_connect);
-                     reConnectDialog.setCancelable(false);
-                     reConnectDialog.setCanceledOnTouchOutside(false);
-                     reConnectDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                     reConnectDialog.show();
-                     reConnect = (Button) reConnectDialog.findViewById(R.id.buttonReconnect);
-                     reConnect.setOnClickListener(new View.OnClickListener() {
-                         @Override
-                         public void onClick(View v) {
-                             reConnectDialog.cancel();
-                             progressDialog.show(MainActivity.this);
-                             getData();
-                         }
-                     });
-                 }
-                 else
-                 {
-                     if(!reConnectDialog.isShowing())
-                     {
-                         reConnectDialog.show();
-                     }
-                 }
-
-
+                 importFromPref();
              }
+
+         }
+         @Override
+         public void onFailure(Call<ApiResponse<List<Coin>>> call, Throwable t) {
+             importFromPref();
              Toast.makeText(MainActivity.this, getResources().getString(R.string.internet_error), Toast.LENGTH_SHORT).show();
          }
      });
@@ -161,22 +147,27 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         call.enqueue(new Callback<ApiResponse<List<gold>>>() {
             @Override
             public void onResponse(Call<ApiResponse<List<gold>>> call, Response<ApiResponse<List<gold>>> response) {
-                List<gold> temp= response.body().getData();
-                for (int i =0;i<temp.size();i++)
-                {
-                    goldList.add(temp.get(i));
-                }
-                SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                Gson gson = new Gson();
-                String json = gson.toJson(goldList);
-                prefsEditor.putString("goldList", json);
-                prefsEditor.commit();
-                if (reConnectDialog != null)
-                    if (reConnectDialog.isShowing())
-                        reConnectDialog.cancel();
-                progressDialog.cancel();
-                CoinFragment fragment = new CoinFragment();
-                loadFragment(fragment);
+               if (response.isSuccessful()) {
+                   List<gold> temp = response.body().getData();
+                   for (int i = 0; i < temp.size(); i++) {
+                       goldList.add(temp.get(i));
+                   }
+                   SharedPreferences.Editor prefsEditor = mPrefs.edit();
+                   Gson gson = new Gson();
+                   String json = gson.toJson(goldList);
+                   prefsEditor.putString("goldList", json);
+                   prefsEditor.commit();
+                   if (reConnectDialog != null)
+                       if (reConnectDialog.isShowing())
+                           reConnectDialog.cancel();
+                   progressDialog.cancel();
+                   CoinFragment fragment = new CoinFragment();
+                   loadFragment(fragment);
+               }
+               else
+               {
+                   importFromPref();
+               }
             }
             @Override
             public void onFailure(Call<ApiResponse<List<gold>>> call, Throwable t) {
@@ -197,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fargment_container,fragment).commit();
+                    .replace(R.id.fargment_container,fragment).commitNowAllowingStateLoss();
                  return true;
         }
         return false;
@@ -206,34 +197,30 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     {
                 Calendar firingCal = Calendar.getInstance() ;
                 Calendar calendar = Calendar.getInstance();
-
                 firingCal.set(Calendar.HOUR_OF_DAY, 9);
                 firingCal.set(Calendar.MINUTE, 1);
                 firingCal.set(Calendar.SECOND, 1);
                 long intendedTime= firingCal.getTimeInMillis();
                 long currentTime= calendar.getTimeInMillis();
+                Intent intent = new Intent(getApplicationContext(), Notification_reciver.class);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                if (intendedTime >= currentTime) {
+                    alarmManager.setRepeating(AlarmManager.RTC,
+                            intendedTime,
+                            AlarmManager.INTERVAL_DAY,
+                            pendingIntent);
 
-               Intent intent = new Intent(getApplicationContext(), Notification_reciver.class);
-               PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-               AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-        if (intendedTime >= currentTime) {
-            alarmManager.setRepeating(AlarmManager.RTC,
-                    intendedTime,
-                    AlarmManager.INTERVAL_DAY,
-                    pendingIntent);
-
-        }
-        else
-        {
-            firingCal.add(Calendar.DAY_OF_MONTH, 1);
-            intendedTime = firingCal.getTimeInMillis();
-            alarmManager.setRepeating(AlarmManager.RTC,
-                    intendedTime,
-                    AlarmManager.INTERVAL_DAY,
-                    pendingIntent);
-        }
-
+                }
+                else
+                {
+                    firingCal.add(Calendar.DAY_OF_MONTH, 1);
+                    intendedTime = firingCal.getTimeInMillis();
+                    alarmManager.setRepeating(AlarmManager.RTC,
+                            intendedTime,
+                            AlarmManager.INTERVAL_DAY,
+                            pendingIntent);
+                }
     }
 
     public  void setDolarNotification()
@@ -271,5 +258,61 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 break;
         }
         return loadFragment(fragment);
+    }
+
+
+    public void  importFromPref()
+    {
+        if (mPrefs.contains("coinList") && mPrefs.contains("goldList") ) {
+            Gson gson = new Gson();
+            String json = mPrefs.getString("coinList", "");
+            Type type = new TypeToken<List<Coin>>() {
+            }.getType();
+            coinList = gson.fromJson(json, type);
+            gson = new Gson();
+            json = mPrefs.getString("goldList", "");
+            type = new TypeToken<List<gold>>() {
+            }.getType();
+            goldList = gson.fromJson(json, type);
+            progressDialog.cancel();
+            CoinFragment fragment = new CoinFragment();
+            loadFragment(fragment);
+        }
+        else
+        {
+            progressDialog.cancel();
+            if (reConnectDialog == null) {
+                reConnectDialog = new Dialog(MainActivity.this, R.style.myDialog);
+                reConnectDialog.setContentView(R.layout.dialog_connect);
+                reConnectDialog.setCancelable(false);
+                reConnectDialog.setCanceledOnTouchOutside(false);
+                reConnectDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                reConnectDialog.show();
+                reConnect = (Button) reConnectDialog.findViewById(R.id.buttonReconnect);
+                reConnect.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        reConnectDialog.cancel();
+                        progressDialog.show(MainActivity.this);
+                        getData();
+                    }
+                });
+            }
+            else
+            {
+                if(!reConnectDialog.isShowing())
+                {
+                    reConnectDialog.show();
+                }
+            }
+
+
+        }
+    }
+    public void displayInterstitial() {
+// If Ads are loaded, show Interstitial else show nothing.
+        if (interstitial.isLoaded()) {
+            interstitial.show();
+        }
     }
 }

@@ -27,6 +27,8 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.mg.spstocks.MainActivity;
 import com.mg.spstocks.R;
 import com.mg.spstocks.models.Coin;
@@ -61,6 +63,8 @@ public class TransferFragment  extends Fragment {
         input =(EditText)view.findViewById(R.id.button_input) ;
         sellRes = (TextView) view.findViewById(R.id.sellRes);
         buyRes = (TextView) view.findViewById(R.id.BuyRes);
+
+
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -250,10 +254,6 @@ public class TransferFragment  extends Fragment {
          buyRes.setText(rounded);
          from =tempFrom;
          to =tempTO;
-
-
-
-
     }
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
@@ -286,10 +286,6 @@ public class TransferFragment  extends Fragment {
             }
         });
     }
-
-
-
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
