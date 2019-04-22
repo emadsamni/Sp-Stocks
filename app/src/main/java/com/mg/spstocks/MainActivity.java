@@ -101,6 +101,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         getData();
         setNotification();
         setDolarNotification();
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest2 = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest2);
 
 
 

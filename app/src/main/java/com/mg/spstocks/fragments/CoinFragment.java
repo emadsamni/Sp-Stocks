@@ -42,9 +42,6 @@ public class CoinFragment extends Fragment {
         LinearLayoutManager layoutManager =new LinearLayoutManager( getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         myRecyclerView.setLayoutManager(layoutManager);
-        AdView mAdView = (AdView) view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
 
         return view;
 
